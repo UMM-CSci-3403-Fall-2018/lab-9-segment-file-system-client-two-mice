@@ -1,5 +1,8 @@
 *.class
 
+# Aruba temporary files
+test/tmp
+
 # Package Files #
 *.jar
 *.war
