@@ -1,4 +1,4 @@
-package segmentedserver;
+package segmentedfilesystem;
 
 public class Main {
     
