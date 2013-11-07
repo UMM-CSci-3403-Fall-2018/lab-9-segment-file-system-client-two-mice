@@ -1,7 +1,7 @@
 *.class
 
 # Aruba temporary files
-test/tmp
+aruba-test/tmp
 
 # Package Files #
 *.jar
