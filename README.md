@@ -64,7 +64,15 @@ The decision to only use 1 byte for the file ID means that there can't be more t
 
 As mentioned above, your (Java) program starts things off by sending a UDP/datagram packet to the server, and then waits and receives packets from the server until all three files are completely received. When a file is complete, it should be written to disk using the file name sent in the header packet. When all three files have been written to disk, the client should terminate cleanly.
 
-The main complication here is we don't control the order in which packets will be received. This means, among other things, that:
+## Starting the conversation
+
+You start things off by sending a (mostly empty) packet to the server as a way of saying "Hello – send me stuff!". To do this you'll need to know the name of the server you're connecting to, and the port to use for the connection; this information should be provided in class.
+
+What should that initial packet look like that you send to the server to start things off? Actually, it can be completely empty, since all your doing is announcing that you're interested. Everything the server needs to respond to your request is your IP and port number, and all that is encoded in your outgoing package "for free" by Java's `DatagramPacket` class. So just create an empty buffer, stick that in a `DatagramPacket` and send it out on the `DatagramSocket` that you set up between you and the server.
+
+## Processing the packets you receive
+
+The main complication when receiving the packets is we don't control the order in which packets will be received. This means, among other things, that:
 
 -   The header packet won't necessarily come first, so we might start receiving data for a file before we've gotten the header for it (and know the file name). In an extreme case, we might get *all* the data packets (including the one with the "last packet" bit set) before we get the header packet. (Remember that the "last packet" bit tells us how many packets there should be thanks to the packet number, but it doesn't mean that it's the last packet to arrive.)
 -   The data packets can arrive in random order, so we'll have to store them in some fashion until we have them all, and then put them in order before we write them out to the file.
