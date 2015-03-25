@@ -99,4 +99,76 @@ All of these ideas are just that: ideas. Your group should definitely spend some
 
 **If you've written unit tests for your data structures and they pass, you'll get partial credit even if the whole client is not correct**
 
+## Check your work with the Aruba/Cucumber functional tests
+
 In addition to your unit tests, there is an Aruba/Cucumber test that tests if you receive the files and assemble them correctly. You should make sure you run that test, and if it doesn't pass and you're not sure why, *definitely ask*! :bangbang: Don't just focus on passing that test from the start, though. It's a big end-to-end test, and it will probably be very difficult to try to debug your code by looking at how your program fails that rather complex test.
+
+To run the Aruba/Cucumber test go into the `aruba-test` directory (`cd aruba-test`) and the command `cucumber` should then run the test.
+
+If I run the functional tests on an initial fork of the starter code, for example, I get something like the following:
+
+```
+@announce
+Feature: Getting files from a server and putting them together
+  In order to demonstrate our understanding of UDP networks
+  As a team of students
+  We want to be able to get packets for three files from a remote server and assemble them correctly.
+
+  Scenario: Contact the server; collect and construct the files                                # features/segmented_file_client.feature:7
+    Given a compiled implementation of the client in `bin`                                     # features/step_definitions/segmented_file_client_steps.rb:10
+      expected `File.file?(".../Segmented-file-system-client-solution/aruba-test/tmp/bin/segmentedserver/Main.class")` to return true, got false (RSpec::Expectations::ExpectationNotMetError)
+      ./features/step_definitions/segmented_file_client_steps.rb:11:in `/^a compiled implementation of the client in `bin`$/'
+      features/segmented_file_client.feature:8:in `Given a compiled implementation of the client in `bin`'
+    When we run our implementation of the segmented file client                                # features/step_definitions/segmented_file_client_steps.rb:17
+    Then the file "small.txt" exists                                                           # features/step_definitions/segmented_file_client_steps.rb:23
+    And the file "small.txt" should differ from "etc/small.txt" only by whitespace             # features/step_definitions/segmented_file_client_steps.rb:29
+    And the file "AsYouLikeIt.txt" exists                                                      # features/step_definitions/segmented_file_client_steps.rb:23
+    And the file "AsYouLikeIt.txt" should differ from "etc/AsYouLikeIt.txt" only by whitespace # features/step_definitions/segmented_file_client_steps.rb:29
+    And the file "binary.jpg" exists                                                           # features/step_definitions/segmented_file_client_steps.rb:23
+    And the file "binary.jpg" should differ from "etc/binary.jpg" only by whitespace           # features/step_definitions/segmented_file_client_steps.rb:29
+
+Failing Scenarios:
+cucumber features/segmented_file_client.feature:7 # Scenario: Contact the server; collect and construct the files
+
+1 scenario (1 failed)
+8 steps (1 failed, 7 skipped)
+```
+
+There's a lot of output here, and it can be fairly intimidating, but there's actually some helpful information if you just read through it carefully. In this case the first and only (so far) error is that it couldn't find my compiled client code (`bin/segmentedserver/Main.class`), which isn't super surprising since I haven't written or compiled anything yet :-).
+
+In general the output from this test should read in a fairly "natural language" fashion, so you should be able to read from the top down, looking for the first red text (assuming your setup supports colored output), since that will be the first error.
+
+When I load up the project in Eclipse and get it to compile (just running the project will do that), then that creates the `bin` directory and puts the class files there that the Aruba tests are expecting. This changes the output to:
+
+```
+@announce
+Feature: Getting files from a server and putting them together
+  In order to demonstrate our understanding of UDP networks
+  As a team of students
+  We want to be able to get packets for three files from a remote server and assemble them correctly.
+
+  Scenario: Contact the server; collect and construct the files                                # features/segmented_file_client.feature:7
+    Given a compiled implementation of the client in `bin`                                     # features/step_definitions/segmented_file_client_steps.rb:10
+    When we run our implementation of the segmented file client                                # features/step_definitions/segmented_file_client_steps.rb:17
+      $ cd .../Segmented-file-system-client-solution/aruba-test/tmp/aruba
+      $ etc/run_segmented_file_client.sh
+      
+      
+    Then the file "small.txt" exists                                                           # features/step_definitions/segmented_file_client_steps.rb:23
+      expected `File.file?(".../Segmented-file-system-client-solution/aruba-test/tmp/aruba/small.txt")` to return true, got false (RSpec::Expectations::ExpectationNotMetError)
+      ./features/step_definitions/segmented_file_client_steps.rb:24:in `/^the file "([^"]*)" exists$/'
+      features/segmented_file_client.feature:10:in `Then the file "small.txt" exists'
+    And the file "small.txt" should differ from "etc/small.txt" only by whitespace             # features/step_definitions/segmented_file_client_steps.rb:29
+    And the file "AsYouLikeIt.txt" exists                                                      # features/step_definitions/segmented_file_client_steps.rb:23
+    And the file "AsYouLikeIt.txt" should differ from "etc/AsYouLikeIt.txt" only by whitespace # features/step_definitions/segmented_file_client_steps.rb:29
+    And the file "binary.jpg" exists                                                           # features/step_definitions/segmented_file_client_steps.rb:23
+    And the file "binary.jpg" should differ from "etc/binary.jpg" only by whitespace           # features/step_definitions/segmented_file_client_steps.rb:29
+
+Failing Scenarios:
+cucumber features/segmented_file_client.feature:7 # Scenario: Contact the server; collect and construct the files
+
+1 scenario (1 failed)
+8 steps (1 failed, 5 skipped, 2 passed)
+```
+
+Here the first failure is after running program. Since the program doesn't do anything (`Main` is empty), none of the files are actually assmembled and written out. This is reflected by the error saying that `small.txt` doesn't exist.
