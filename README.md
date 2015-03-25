@@ -85,7 +85,11 @@ Other issues include:
 
 Most of this is really a data structures problem. Before you start banging on the keyboard, take some time to talk about how you're going to unmarshall the packets and store their data. Having a good plan for that will make a huge difference.
 
-### Testing
+As far as actually receiving the packages, you just need to keep calling `socket.receive(packet)` on the `DatagramSocket` you set up until you've got all the packets. You'll probably want to construct a new `DatagramPacket` for every call to `receive` so that you know that the receipt of a new packet won't overwrite the buffer data from the previous packet. Since you know that each packet has no more than 1K of data, the buffer in the packet needs to be big enough for the 1K of data plus the maximum amount of header information as discussed in the packet structure description up above.
+
+# Testing
+
+## Unit test your work
 
 :bangbang: ***Write tests*** :bangbang:
 
