@@ -7,9 +7,9 @@ public class Main {
     
     public static void main(String[] args) {
         int port;
-        InetAddress address;
+        InetAddress address = null;
         DatagramSocket socket = null;
-        DatagramPacket packet;
+        DatagramPacket packet = null;
         byte[] sendBuf = new byte[1024];
 
         // Test validity of request
@@ -24,6 +24,7 @@ public class Main {
             System.err.println("A SocketException was caught: " + se.getMessage());
         }
 
+        // Request to server
         byte[] buf = new byte[1024];
 
         try {
@@ -32,7 +33,6 @@ public class Main {
             System.err.println("An Unknown Host Exception was caught: " + uhe.getMessage());
         }
 
-
         packet = new DatagramPacket(buf, buf.length, address, 6014);
 
         try {
@@ -40,6 +40,15 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Receive from server
+        packet = new DatagramPacket(buf, buf.length);
+        try {
+            socket.receive(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
