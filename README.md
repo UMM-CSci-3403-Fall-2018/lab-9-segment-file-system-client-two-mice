@@ -68,7 +68,7 @@ As mentioned above, your (Java) program starts things off by sending a UDP/datag
 
 You start things off by sending a (mostly empty) packet to the server as a way of saying "Hello – send me stuff!". To do this you'll need to know the name of the server you're connecting to, and the port to use for the connection; this information should be provided in class.
 
-What should that initial packet look like that you send to the server to start things off? Actually, it can be completely empty, since all your doing is announcing that you're interested. Everything the server needs to respond to your request is your IP and port number, and all that is encoded in your outgoing package "for free" by Java's `DatagramPacket` class. So just create an empty buffer, stick that in a `DatagramPacket` and send it out on the `DatagramSocket` that you set up between you and the server.
+What should that initial packet look like that you send to the server to start things off? Actually, it can be completely empty, since all you're doing is announcing that you're interested. Everything the server needs to respond to your request is your IP and port number, and all that is encoded in your outgoing package "for free" by Java's `DatagramPacket` class. So just create an empty buffer, stick that in a `DatagramPacket` and send it out on the `DatagramSocket` that you set up between you and the server.
 
 ## Processing the packets you receive
 
@@ -102,7 +102,7 @@ All of these ideas are just that: ideas. Your group should definitely spend some
 ## Check your work by running your client by hand
 
 In addition to your unit tests, you can run your program "by hand" and see if
-the files you get back match the expected files. The `etc` folder in the
+the files you get back match the expected files. The `aruba-test/etc` folder in the
 repository has three files in it:
 
 * `small.txt`
@@ -112,6 +112,6 @@ repository has three files in it:
 If your client is working properly, running it should terminate gracefully,
 leaving three files in the directory you ran it in that match these three
 files exactly. So, for example, if you run your client in `src`, then a
-command like `diff binary.jpg ../etc/binary.jpg` (if run in `src`) should
+command like `diff binary.jpg ../aruba-test/etc/binary.jpg` (if run in `src`) should
 return no differences. You should also be able to examine the contents of the
 files you received and assembled and confirm that they look reasonable.
