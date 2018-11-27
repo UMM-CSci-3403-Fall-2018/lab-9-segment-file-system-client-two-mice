@@ -6,11 +6,11 @@ import java.net.*;
 public class Main {
     
     public static void main(String[] args) {
-        int port;
+        int port = 6014;
         InetAddress address = null;
         DatagramSocket socket = null;
-        DatagramPacket packet = null;
-        byte[] sendBuf = new byte[1024];
+        DatagramPacket packet;
+        // byte[] sendBuf = new byte[1024];
 
         // Test validity of request
         if (args.length != 1) {
@@ -33,7 +33,7 @@ public class Main {
             System.err.println("An Unknown Host Exception was caught: " + uhe.getMessage());
         }
 
-        packet = new DatagramPacket(buf, buf.length, address, 6014);
+        packet = new DatagramPacket(buf, buf.length, address, port);
 
         try {
             socket.send(packet);
@@ -49,6 +49,18 @@ public class Main {
             e.printStackTrace();
         }
 
+        /*
+        String received = new String(packet.getData(), 0, packet.getLength());
+        System.out.println("Quote of the Moment: " + received);
+        */
+
+        byte[] received = packet.getData();
+        // System.out.println(received.length);
+        /*
+        for (int i = 0; i < received.length; i++) {
+            System.out.println(received[i]);
+        }
+        */
     }
 
 }
