@@ -2,7 +2,6 @@ package segmentedfilesystem;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
 
 public class Main {
     
@@ -26,7 +25,7 @@ public class Main {
         }
 
         // Request to server
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[1028];
 
         try {
             address = InetAddress.getByName(args[0]);
@@ -42,22 +41,18 @@ public class Main {
             e.printStackTrace();
         }
 
-
-
         /*
         String received = new String(packet.getData(), 0, packet.getLength());
         System.out.println("Quote of the Moment: " + received);
         */
+
         StringBuilder str = new StringBuilder("null");
 
-        File file1 = new File(str, Byte.parseByte("0"));
-        File file2 = new File(str, Byte.parseByte("0"));
-        File file3 = new File(str, Byte.parseByte("0"));
+        File file1 = new File(str);
+        File file2 = new File(str);
+        File file3 = new File(str);
 
-        ArrayList<byte[]> headers = new ArrayList<>();
-
-        // while loop goes here
-        while(!file1.isComplete() && !file2.isComplete() && !file3.isComplete()) {
+        while((!file1.isComplete() && !file2.isComplete() && !file3.isComplete())) {
 
             // Receive from server
             packet = new DatagramPacket(buf, buf.length);
@@ -69,29 +64,28 @@ public class Main {
 
             byte[] received = packet.getData();
 
-            // System.out.println(received[0]);
-
             // End check
             if (received[0] % 4 == 3) {
                 if (received[1] == file1.getID()) {
                     file1.addFooter(received);
+                    System.out.println("foot 1");
                 } else if (received[1] == file2.getID()) {
                     file2.addFooter(received);
-                } else {
+                    System.out.println("foot 2");
+                } else if (received[1] == file3.getID()){
                     file3.addFooter(received);
+                    System.out.println("foot 3");
                 }
             }
 
-            // Header check and else data check
+            // Header check
             else if (received[0] % 2 == 0) {
-                if (!headers.contains(received)) {
-                    headers.add(received);
 
                     StringBuilder name = new StringBuilder();
 
                     // get name of file
                     for (int i = 2; i < received.length; i++) {
-                        name.append(Byte.toString(received[i]));
+                            name.append(Byte.toString(received[i]));
                     }
 
                     byte id = received[1];
@@ -99,25 +93,37 @@ public class Main {
                     if (file1.name.equals("null")) {
                         file1 = new File(name, id);
                         file1.addHeader(received);
-                        System.out.println(name + "Print found 1");
+                        System.out.println("found 1");
+                        System.out.println(file1.getID());
                     } else if (file2.name.equals("null")) {
                         file2 = new File(name, id);
                         file2.addHeader(received);
-                        System.out.println("Print found 2");
-                    } else {
+                        System.out.println("found 2");
+                        System.out.println(file2.getID());
+                    } else if (file3.name.equals("null")){
                         file3 = new File(name, id);
                         file3.addHeader(received);
-                        System.out.println("Print found 3");
+                        System.out.println("found 3");
+                    } else {
+                        throw new IllegalStateException("We should never see more than 3 files.");
                     }
-                }
-            } else {
+            }
+
+            // Data check
+            else if (received[0] % 2 == 1){
+                // System.out.println("Found data packet");
                 if (received[1] == file1.getID()) {
                     file1.addData(received);
+                    System.out.println("add 1");
                 } else if (received[1] == file2.getID()) {
                     file2.addData(received);
-                } else {
+                    System.out.println("add 2");
+                } else if (received[1] == file3.getID()){
                     file3.addData(received);
+                    System.out.println("add 3");
                 }
+            } else {
+                throw new IllegalStateException("received packet is invalid");
             }
         }
 
