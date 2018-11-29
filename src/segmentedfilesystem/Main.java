@@ -2,6 +2,7 @@ package segmentedfilesystem;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Main {
     
@@ -55,6 +56,19 @@ public class Main {
         */
 
         byte[] received = packet.getData();
+        ArrayList<byte[]> headers = new ArrayList<byte[]>();
+
+        // Header check
+        if (received[0]%2 == 0) {
+            if (!headers.contains(received)) {
+             headers.add(received);
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            String string = Byte.toString(received[i]);
+            System.out.println(string);
+        }
         // System.out.println(received.length);
         /*
         for (int i = 0; i < received.length; i++) {
