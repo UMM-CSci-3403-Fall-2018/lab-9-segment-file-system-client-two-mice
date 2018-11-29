@@ -15,11 +15,8 @@ public class File {
     }
 
     public void addFooter(byte[] footer) {
-        if(!datapacket.contains(footer)){
-            this.datapacket.add(footer);
             total = footer[2];
             this.footer = footer;
-        }
     }
     public void addData(byte[] packet) {
         if(!datapacket.contains(packet)){
@@ -30,6 +27,10 @@ public class File {
     public File(StringBuilder name, byte id) {
         this.name = name.toString();
         this.id = id;
+    }
+
+    public File(StringBuilder name) {
+        this.name = name.toString();
     }
 
     public boolean isComplete() {
