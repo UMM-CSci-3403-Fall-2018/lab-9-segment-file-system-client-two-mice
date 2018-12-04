@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
+
 public class Main {
     
     public static void main(String[] args) {
@@ -47,17 +48,17 @@ public class Main {
         System.out.println("Quote of the Moment: " + received);
         */
 
-        // Sets placeholder name to be used for Files
+        // Sets placeholder name to be used for OurFiles
         StringBuilder str = new StringBuilder("null");
 
-        File file1 = new File(str);
-        File file2 = new File(str);
-        File file3 = new File(str);
+        OurFile file1 = new OurFile(str);
+        OurFile file2 = new OurFile(str);
+        OurFile file3 = new OurFile(str);
 
         ArrayList<byte[]> tempData = new ArrayList<byte[]>();
         ArrayList<byte[]> tempFooter = new ArrayList<byte[]>();
 
-        // File "builder" will run until all three files are received
+        // OurFile "builder" will run until all three files are received
         while((!file1.isComplete() && !file2.isComplete() && !file3.isComplete())) {
 
             // Receive from server
@@ -74,13 +75,13 @@ public class Main {
             if (received[0] % 4 == 3) {
                 if (received[1] == file1.getID()) {
                     file1.addFooter(received);
-                    System.out.println("foot 1");
+                    // System.out.println("foot 1");
                 } else if (received[1] == file2.getID()) {
                     file2.addFooter(received);
-                    System.out.println("foot 2");
+                    // System.out.println("foot 2");
                 } else if (received[1] == file3.getID()){
                     file3.addFooter(received);
-                    System.out.println("foot 3");
+                    // System.out.println("foot 3");
                 } else if (!tempFooter.contains(received)){
                     tempFooter.add(received);
                 }
@@ -89,32 +90,37 @@ public class Main {
             // Header check
             else if (received[0] % 2 == 0) {
 
-                    StringBuilder name = new StringBuilder();
+                //StringBuilder name = new StringBuilder();
+                int length = packet.getLength();
+                byte[] names = java.util.Arrays.copyOfRange(received,2, length);
+                //String name = new String(names);
+                String name = new String(names);
+               /* // get name of file
+                for (int i = 2; i < received.length; i++) {
+                    String temp = Byte.toString(received[i]);
+                    // name.append(Byte.toString(received[i]));
+                    name.append(temp);
+                }*/
 
-                    // get name of file
-                    for (int i = 2; i < received.length; i++) {
-                            name.append(Byte.toString(received[i]));
-                    }
+                byte id = received[1];
 
-                    byte id = received[1];
-
-                    if (file1.name.equals("null")) {
-                        file1 = new File(name, id);
-                        file1.addHeader(received);
-                        System.out.println("found 1");
-                        System.out.println(file1.getID());
-                    } else if (file2.name.equals("null")) {
-                        file2 = new File(name, id);
-                        file2.addHeader(received);
-                        System.out.println("found 2");
-                        System.out.println(file2.getID());
-                    } else if (file3.name.equals("null")){
-                        file3 = new File(name, id);
-                        file3.addHeader(received);
-                        System.out.println("found 3");
-                    } else {
-                        throw new IllegalStateException("We should never see more than 3 files.");
-                    }
+                if (file1.name.equals("null")) {
+                    file1 = new OurFile(name, id);
+                    file1.addHeader(received);
+                    // System.out.println("found 1");
+                    // System.out.println(file1.getID());
+                } else if (file2.name.equals("null")) {
+                    file2 = new OurFile(name, id);
+                    file2.addHeader(received);
+                    // System.out.println("found 2");
+                    // System.out.println(file2.getID());
+                } else if (file3.name.equals("null")){
+                    file3 = new OurFile(name, id);
+                    file3.addHeader(received);
+                    // System.out.println("found 3");
+                } else {
+                    throw new IllegalStateException("We should never see more than 3 files.");
+                }
             }
 
             // Data check
@@ -122,13 +128,13 @@ public class Main {
                 // System.out.println("Found data packet");
                 if (received[1] == file1.getID()) {
                     file1.addData(received);
-                    System.out.println("add 1");
+                    // System.out.println("add 1");
                 } else if (received[1] == file2.getID()) {
                     file2.addData(received);
-                    System.out.println("add 2");
+                    // System.out.println("add 2");
                 } else if (received[1] == file3.getID()) {
                     file3.addData(received);
-                    System.out.println("add 3");
+                    // System.out.println("add 3");
                 } else if (!tempData.contains(received)) {
                     tempData.add(received);
                 }
@@ -136,22 +142,23 @@ public class Main {
                 throw new IllegalStateException("received packet is invalid");
             }
 
+
             // Add tempFooter if possible
             for (int i = 0; i < tempFooter.size(); i++) {
                 if (tempFooter.get(i)[1] == file1.getID()) {
                     file1.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
-                    System.out.println("add tempfoot 1");
+                    // System.out.println("add tempfoot 1");
                 } else if (tempFooter.get(i)[1] == file2.getID()) {
                     file2.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
-                    System.out.println("add tempfoot 2");
+                    // System.out.println("add tempfoot 2");
                 } else if (tempFooter.get(i)[1] == file3.getID()) {
                     file3.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
-                    System.out.println("add tempfoot 3");
+                    // System.out.println("add tempfoot 3");
                 } else {
-                    // System.out.println("tempFooter error");
+                    // System.out.println("tempFooter error: " + tempFooter.size());
                 }
             }
 
@@ -160,21 +167,26 @@ public class Main {
                 if (tempData.get(i)[1] == file1.getID()) {
                     file1.addData(tempData.get(i));
                     tempData.remove(i);
-                    System.out.println("add tempdata 1");
+                    // System.out.println("add tempdata 1");
                 } else if (tempData.get(i)[1] == file2.getID()) {
                     file2.addData(tempData.get(i));
                     tempData.remove(i);
-                    System.out.println("add tempdata 2");
+                    // System.out.println("add tempdata 2");
                 } else if (tempData.get(i)[1] == file3.getID()) {
                     file3.addData(tempData.get(i));
                     tempData.remove(i);
-                    System.out.println("add tempdata 3");
+                    // System.out.println("add tempdata 3");
                 } else {
                     // System.out.println("tempData error");
                 }
             }
 
+
         }
+
+        file1.sortData();
+        file2.sortData();
+        file3.sortData();
 
         System.out.println(file1.name);
         System.out.println(file2.name);
