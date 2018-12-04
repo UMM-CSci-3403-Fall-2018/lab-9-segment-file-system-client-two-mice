@@ -75,13 +75,13 @@ public class Main {
             if (received[0] % 4 == 3) {
                 if (received[1] == file1.getID()) {
                     file1.addFooter(received);
-                    // System.out.println("foot 1");
+                    System.out.println("foot 1");
                 } else if (received[1] == file2.getID()) {
                     file2.addFooter(received);
-                    // System.out.println("foot 2");
+                    System.out.println("foot 2");
                 } else if (received[1] == file3.getID()){
                     file3.addFooter(received);
-                    // System.out.println("foot 3");
+                    System.out.println("foot 3");
                 } else if (!tempFooter.contains(received)){
                     tempFooter.add(received);
                 }
@@ -107,17 +107,17 @@ public class Main {
                 if (file1.name.equals("null")) {
                     file1 = new OurFile(name, id);
                     file1.addHeader(received);
-                    // System.out.println("found 1");
+                    System.out.println("found 1");
                     // System.out.println(file1.getID());
                 } else if (file2.name.equals("null")) {
                     file2 = new OurFile(name, id);
                     file2.addHeader(received);
-                    // System.out.println("found 2");
+                    System.out.println("found 2");
                     // System.out.println(file2.getID());
                 } else if (file3.name.equals("null")){
                     file3 = new OurFile(name, id);
                     file3.addHeader(received);
-                    // System.out.println("found 3");
+                    System.out.println("found 3");
                 } else {
                     throw new IllegalStateException("We should never see more than 3 files.");
                 }
@@ -148,15 +148,15 @@ public class Main {
                 if (tempFooter.get(i)[1] == file1.getID()) {
                     file1.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
-                    // System.out.println("add tempfoot 1");
+                    System.out.println("add tempfoot 1");
                 } else if (tempFooter.get(i)[1] == file2.getID()) {
                     file2.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
-                    // System.out.println("add tempfoot 2");
+                    System.out.println("add tempfoot 2");
                 } else if (tempFooter.get(i)[1] == file3.getID()) {
                     file3.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
-                    // System.out.println("add tempfoot 3");
+                    System.out.println("add tempfoot 3");
                 } else {
                     // System.out.println("tempFooter error: " + tempFooter.size());
                 }
