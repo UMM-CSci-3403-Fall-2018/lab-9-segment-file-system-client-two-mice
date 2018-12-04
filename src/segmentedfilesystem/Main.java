@@ -2,6 +2,7 @@ package segmentedfilesystem;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Main {
     
@@ -46,12 +47,17 @@ public class Main {
         System.out.println("Quote of the Moment: " + received);
         */
 
+        // Sets placeholder name to be used for Files
         StringBuilder str = new StringBuilder("null");
 
         File file1 = new File(str);
         File file2 = new File(str);
         File file3 = new File(str);
 
+        ArrayList<byte[]> tempData = new ArrayList<byte[]>();
+        ArrayList<byte[]> tempFooter = new ArrayList<byte[]>();
+
+        // File "builder" will run until all three files are received
         while((!file1.isComplete() && !file2.isComplete() && !file3.isComplete())) {
 
             // Receive from server
@@ -64,7 +70,7 @@ public class Main {
 
             byte[] received = packet.getData();
 
-            // End check
+            // Footer check
             if (received[0] % 4 == 3) {
                 if (received[1] == file1.getID()) {
                     file1.addFooter(received);
@@ -75,6 +81,8 @@ public class Main {
                 } else if (received[1] == file3.getID()){
                     file3.addFooter(received);
                     System.out.println("foot 3");
+                } else if (!tempFooter.contains(received)){
+                    tempFooter.add(received);
                 }
             }
 
@@ -118,13 +126,54 @@ public class Main {
                 } else if (received[1] == file2.getID()) {
                     file2.addData(received);
                     System.out.println("add 2");
-                } else if (received[1] == file3.getID()){
+                } else if (received[1] == file3.getID()) {
                     file3.addData(received);
                     System.out.println("add 3");
+                } else if (!tempData.contains(received)) {
+                    tempData.add(received);
                 }
             } else {
                 throw new IllegalStateException("received packet is invalid");
             }
+
+            // Add tempFooter if possible
+            for (int i = 0; i < tempFooter.size(); i++) {
+                if (tempFooter.get(i)[1] == file1.getID()) {
+                    file1.addFooter(tempFooter.get(i));
+                    tempFooter.remove(i);
+                    System.out.println("add tempfoot 1");
+                } else if (tempFooter.get(i)[1] == file2.getID()) {
+                    file2.addFooter(tempFooter.get(i));
+                    tempFooter.remove(i);
+                    System.out.println("add tempfoot 2");
+                } else if (tempFooter.get(i)[1] == file3.getID()) {
+                    file3.addFooter(tempFooter.get(i));
+                    tempFooter.remove(i);
+                    System.out.println("add tempfoot 3");
+                } else {
+                    // System.out.println("tempFooter error");
+                }
+            }
+
+            // Add tempData if possible
+            for (int i = 0; i < tempData.size(); i++) {
+                if (tempData.get(i)[1] == file1.getID()) {
+                    file1.addData(tempData.get(i));
+                    tempData.remove(i);
+                    System.out.println("add tempdata 1");
+                } else if (tempData.get(i)[1] == file2.getID()) {
+                    file2.addData(tempData.get(i));
+                    tempData.remove(i);
+                    System.out.println("add tempdata 2");
+                } else if (tempData.get(i)[1] == file3.getID()) {
+                    file3.addData(tempData.get(i));
+                    tempData.remove(i);
+                    System.out.println("add tempdata 3");
+                } else {
+                    // System.out.println("tempData error");
+                }
+            }
+
         }
 
         System.out.println(file1.name);
