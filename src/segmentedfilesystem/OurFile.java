@@ -1,8 +1,10 @@
 package segmentedfilesystem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
-public class File {
+public class OurFile {
     String name;
     byte[] header;
     byte[] footer;
@@ -24,12 +26,13 @@ public class File {
         }
     }
 
-    public File(StringBuilder name, byte id) {
-        this.name = name.toString();
+    public OurFile(String name, byte id) {
+        //this.name = name.toString();
+        this.name = name;
         this.id = id;
     }
 
-    public File(StringBuilder name) {
+    public OurFile(StringBuilder name) {
         this.name = name.toString();
     }
 
@@ -46,5 +49,18 @@ public class File {
 
     public int getID() {
         return this.id;
+    }
+
+    public void sortData() {
+        Collections.sort(datapacket, new sortPackets());
+    }
+
+    class sortPackets implements Comparator<byte[]> {
+        public int compare(byte[] a, byte[] b) {
+            int pna = a[2] | a[3];
+            int pnb = b[2] | b[3];
+
+            return pna - pnb;
+        }
     }
 }
