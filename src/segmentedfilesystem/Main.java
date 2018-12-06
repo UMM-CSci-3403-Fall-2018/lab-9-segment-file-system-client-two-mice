@@ -1,9 +1,12 @@
 package segmentedfilesystem;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
-
+import java.io.File;
+import java.util.Arrays;
 
 public class Main {
     
@@ -69,19 +72,23 @@ public class Main {
                 e.printStackTrace();
             }
 
-            byte[] received = packet.getData();
+            byte[] received1 = packet.getData();
+            byte[] received = Arrays.copyOf(received1, packet.getLength());
 
             // Footer check
             if (received[0] % 4 == 3) {
-                if (received[1] == file1.getID()) {
+                if (received[1] == file1.getID() && file1.footer == null) {
                     file1.addFooter(received);
                     System.out.println("foot 1");
-                } else if (received[1] == file2.getID()) {
+                    // System.out.println(file1.total);
+                } else if (received[1] == file2.getID() && file2.footer == null) {
                     file2.addFooter(received);
                     System.out.println("foot 2");
-                } else if (received[1] == file3.getID()){
+                    // System.out.println(file2.total);
+                } else if (received[1] == file3.getID() && file3.footer == null){
                     file3.addFooter(received);
                     System.out.println("foot 3");
+                    // System.out.println(file3.total);
                 } else if (!tempFooter.contains(received)){
                     tempFooter.add(received);
                 }
@@ -142,21 +149,23 @@ public class Main {
                 throw new IllegalStateException("received packet is invalid");
             }
 
-
             // Add tempFooter if possible
             for (int i = 0; i < tempFooter.size(); i++) {
-                if (tempFooter.get(i)[1] == file1.getID()) {
+                if (tempFooter.get(i)[1] == file1.getID() && file1.footer == null) {
                     file1.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
                     System.out.println("add tempfoot 1");
-                } else if (tempFooter.get(i)[1] == file2.getID()) {
+                    // System.out.println(file1.total);
+                } else if (tempFooter.get(i)[1] == file2.getID() && file2.footer == null) {
                     file2.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
                     System.out.println("add tempfoot 2");
-                } else if (tempFooter.get(i)[1] == file3.getID()) {
+                    // System.out.println(file2.total);
+                } else if (tempFooter.get(i)[1] == file3.getID() && file3.footer == null) {
                     file3.addFooter(tempFooter.get(i));
                     tempFooter.remove(i);
                     System.out.println("add tempfoot 3");
+                    // System.out.println(file3.total);
                 } else {
                     // System.out.println("tempFooter error: " + tempFooter.size());
                 }
@@ -177,21 +186,63 @@ public class Main {
                     tempData.remove(i);
                     // System.out.println("add tempdata 3");
                 } else {
-                    // System.out.println("tempData error");
+                    // System.out.println("tempData error - invalid ID or header is not found yet");
                 }
             }
 
-
+            // System.out.println("Here again");
         }
+
+        System.out.println("Done");
 
         file1.sortData();
         file2.sortData();
         file3.sortData();
 
+        try {
+            FileOutputStream fos = new FileOutputStream(file1.name);
+            for (int i = 0; i < file1.datapacket.size(); i++) {
+                fos.write(file1.datapacket.get(i));
+            }
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file2.name);
+            for (int i = 0; i < file2.datapacket.size(); i++) {
+                fos.write(file2.datapacket.get(i));
+            }
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file3.name);
+            for (int i = 0; i < file3.datapacket.size(); i++) {
+                fos.write(file3.datapacket.get(i));
+            }
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /*
         System.out.println(file1.name);
         System.out.println(file2.name);
         System.out.println(file3.name);
-
+        */
     }
 
 }
