@@ -24,4 +24,8 @@ public class DataPacket {
     public int getPacketNumber() {
         return packetNumber;
     }
+
+    public byte[] getData() {
+        return data;
+    }
 }
