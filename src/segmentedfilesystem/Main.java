@@ -13,7 +13,6 @@ public class Main {
         InetAddress address = null;
         DatagramSocket socket = null;
         DatagramPacket packet;
-        // byte[] sendBuf = new byte[1024];
 
         // Test validity of request
         if (args.length != 1) {
@@ -63,16 +62,15 @@ public class Main {
 
             byte[] received = packet.getData();
             int length = packet.getLength();
-            //byte[] received = Arrays.copyOf(received1, range);
 
-            //Header Check
+            // Header Check
             if (received[0] % 2 == 0) {
                 Header header = new Header(received, length);
 
                 String name = header.getName();
                 byte id = header.getId();
 
-                //create files with headers
+                // Create files with headers
                 if (file1.name.equals("empty")) {
                     file1 = new File(name, id);
                     System.out.println("found 1");
@@ -84,7 +82,7 @@ public class Main {
                     System.out.println("found 3");
                 }
 
-            //Data Packet
+            // Data Packet
             } else {
                 DataPacket data = new DataPacket(received, length);
 
@@ -99,7 +97,7 @@ public class Main {
                 }
             }
 
-            //empty temp array
+            // Empty temp array
             for (int i = 0; i < temp.size(); i ++) {
                 byte id = temp.get(i).getId();
                 if (id == file1.getId()) {
@@ -163,5 +161,4 @@ public class Main {
 
 
     }
-
 }

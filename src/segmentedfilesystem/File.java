@@ -13,7 +13,7 @@ public class File {
     byte id;
 
     public void addData(DataPacket packet) {
-        //packet is a footer
+        // Packet is a footer
         if(packet.status % 4 == 3) {
             this.total = packet.getPacketNumber() + 1;
         }
