@@ -1,5 +1,7 @@
 package segmentedfilesystem;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -112,9 +114,53 @@ public class Main {
 
         socket.close();
 
+        file1.sortPackets();
+        file2.sortPackets();
+        file3.sortPackets();
+
         System.out.println(file1.name);
         System.out.println(file2.name);
         System.out.println(file3.name);
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file1.name);
+            for (int i = 0; i < file1.packets.size(); i++) {
+                fos.write(file1.packets.get(i).getData());
+            }
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file2.name);
+            for (int i = 0; i < file2.packets.size(); i++) {
+                fos.write(file2.packets.get(i).getData());
+            }
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file3.name);
+            for (int i = 0; i < file3.packets.size(); i++) {
+                fos.write(file3.packets.get(i).getData());
+            }
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
