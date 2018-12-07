@@ -1,5 +1,6 @@
 package segmentedfilesystem;
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.ArrayList;
 
 public class File {
@@ -42,6 +43,18 @@ public class File {
 
     public int getId() {
         return this.id;
+    }
+
+    public void sortPackets(){
+        Collections.sort(packets, new SortPackets());
+    }
+}
+
+class SortPackets implements Comparator<DataPacket> {
+    public int compare(DataPacket a, DataPacket b) {
+        int pna = a.getPacketNumber();
+        int pnb = b.getPacketNumber();
+        return pna - pnb;
     }
 }
 
