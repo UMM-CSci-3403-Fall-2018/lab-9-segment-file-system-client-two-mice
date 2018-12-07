@@ -52,7 +52,7 @@ public class Main {
 
         ArrayList<DataPacket> temp = new ArrayList<DataPacket>();
 
-        while((!file3.isComplete())) {
+        while(!(file1.isComplete() && file2.isComplete() && file3.isComplete())) {
 
             try {
                 socket.receive(packet);
