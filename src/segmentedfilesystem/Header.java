@@ -1,12 +1,12 @@
 package segmentedfilesystem;
 
 public class Header {
-    byte status;
     byte id;
     String name;
 
+    // Header constructor
+    // Gives name, id
     public Header(byte[] packet, int length) {
-        this.status = packet[0];
         this.id = packet[1];
 
         byte[] fileName = java.util.Arrays.copyOfRange(packet, 2, length);
@@ -14,6 +14,7 @@ public class Header {
         name = new String(fileName);
     }
 
+    // Getters
     public String getName() {
         return name;
     }

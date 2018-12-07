@@ -20,7 +20,13 @@ public class File {
 
         packets.add(packet);
         counter++;
-        System.out.println(name + " " + counter + "/" + total);
+
+        // Counter visual
+        if (total == -100) {
+            System.out.println(name + " " + counter + "/ ?");
+        } else {
+            System.out.println(name + " " + counter + "/" + total);
+        }
     }
 
     public File(String name, byte id) {
@@ -50,6 +56,7 @@ public class File {
     }
 }
 
+// Used for sortPackets
 class SortPackets implements Comparator<DataPacket> {
     public int compare(DataPacket a, DataPacket b) {
         int pna = a.getPacketNumber();
