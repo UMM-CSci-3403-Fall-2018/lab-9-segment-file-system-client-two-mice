@@ -4,47 +4,45 @@ import java.util.ArrayList;
 
 public class File {
     String name;
-    byte[] header;
-    byte[] footer;
-    ArrayList<byte[]> datapacket = new ArrayList<byte[]>();
-    int total = 0;
+
+    ArrayList<DataPacket> packets = new ArrayList<DataPacket>();
+
+    int total = -100;
+    int counter = 0;
     byte id;
 
-    public void addHeader(byte[] header) {
-        this.header = header;
-    }
-
-    public void addFooter(byte[] footer) {
-            total = footer[2];
-            this.footer = footer;
-    }
-    public void addData(byte[] packet) {
-        if(!datapacket.contains(packet)){
-            this.datapacket.add(packet);
+    public void addData(DataPacket packet) {
+        //packet is a footer
+        if(packet.status % 4 == 3) {
+            this.total = packet.getPacketNumber() + 1;
         }
+
+        packets.add(packet);
+        counter++;
+        System.out.println(name + " " + counter + "/" + total);
     }
 
-    public File(StringBuilder name, byte id) {
-        this.name = name.toString();
+    public File(String name, byte id) {
+        this.name = name;
         this.id = id;
     }
 
-    public File(StringBuilder name) {
-        this.name = name.toString();
+    public File() {
+        this.name = "empty";
+        this.id = 00000000;
     }
 
     public boolean isComplete() {
-        if (total == 0) {
-            return false;
-        }
-        if (datapacket.size() == total) {
+        if (counter == total) {
             return true;
         } else {
             return false;
         }
     }
 
-    public int getID() {
+    public int getId() {
         return this.id;
     }
 }
+
+
