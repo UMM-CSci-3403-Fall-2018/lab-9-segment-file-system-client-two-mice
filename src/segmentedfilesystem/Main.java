@@ -43,6 +43,7 @@ public class Main {
             e.printStackTrace();
         }
 
+        // Specify files for number of files
         File file1 = new File();
         File file2 = new File();
         File file3 = new File();
@@ -52,14 +53,17 @@ public class Main {
 
         ArrayList<DataPacket> temp = new ArrayList<DataPacket>();
 
+        // Checkers and file "builder" - recieve packets
         while(!(file1.isComplete() && file2.isComplete() && file3.isComplete())) {
 
+            // Recieve new packets
             try {
                 socket.receive(packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            // Store packet in byte array for later and get length for completeness later
             byte[] received = packet.getData();
             int length = packet.getLength();
 
@@ -73,13 +77,10 @@ public class Main {
                 // Create files with headers
                 if (file1.name.equals("empty")) {
                     file1 = new File(name, id);
-                    System.out.println("found 1");
                 } else if (file2.name.equals("empty")) {
                     file2 = new File(name, id);
-                    System.out.println("found 2");
                 } else {
                     file3 = new File(name, id);
-                    System.out.println("found 3");
                 }
 
             // Data Packet
@@ -112,14 +113,19 @@ public class Main {
 
         socket.close();
 
+        // Sort by packet number
         file1.sortPackets();
         file2.sortPackets();
         file3.sortPackets();
 
+        // Info
+        System.out.println();
         System.out.println(file1.name);
         System.out.println(file2.name);
         System.out.println(file3.name);
+        System.out.println("DONE!");
 
+        // Build file 1 for read
         try {
             FileOutputStream fos = new FileOutputStream(file1.name);
             for (int i = 0; i < file1.packets.size(); i++) {
@@ -133,6 +139,7 @@ public class Main {
             e.printStackTrace();
         }
 
+        // Build file 2 for read
         try {
             FileOutputStream fos = new FileOutputStream(file2.name);
             for (int i = 0; i < file2.packets.size(); i++) {
@@ -146,6 +153,7 @@ public class Main {
             e.printStackTrace();
         }
 
+        // Build file 3 for read
         try {
             FileOutputStream fos = new FileOutputStream(file3.name);
             for (int i = 0; i < file3.packets.size(); i++) {
@@ -158,7 +166,5 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
